@@ -13,8 +13,8 @@ api_key = st.sidebar.text_input("Cole sua API Key do Google aqui:", type="passwo
 if api_key:
     try:
         genai.configure(api_key=api_key)
-        model = genai.GenerativeModel('gemini-1.5-flash')
-        
+        genai.GenerativeModel('models/gemini-1.5-flash-latest')
+                
         st.subheader("👁️ Visão da IA")
         
         # Opção para o usuário escolher entre Câmera ou Upload de arquivo
