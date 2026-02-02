@@ -19,7 +19,7 @@ if api_key:
     try:
         # CORREÇÃO DO ERRO: Nome oficial do modelo
         genai.configure(api_key=api_key)
-        model = genai.GenerativeModel('gemini-1.5-flash-latest')
+        model = genai.GenerativeModel('gemini-1.5-flash')
 
         # 2. ÁREA DE COMANDO (Texto ou Imagem/Print)
         st.subheader("🎤 O que o Omni deve fazer?")
