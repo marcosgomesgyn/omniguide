@@ -2,7 +2,6 @@ import streamlit as st
 import google.generativeai as genai
 from PIL import Image
 import pandas as pd
-from google.generativeai.types import RequestOptions
 
 # CONFIGURAÇÃO INICIAL
 st.set_page_config(page_title="Vozia - MiraIA", layout="wide")
@@ -16,9 +15,9 @@ api_key = st.sidebar.text_input("Cole sua API Key aqui:", type="password")
 
 if api_key:
     try:
-        # CONFIGURAÇÃO DO MODELO
+        # Configuração simplificada e direta
         genai.configure(api_key=api_key)
-        model = genai.GenerativeModel(model_name='gemini-1.5-flash')
+        model = genai.GenerativeModel('gemini-1.5-flash')
         
         # --- ÁREA DE COMANDO ---
         st.subheader("🎤 O que o Omni deve fazer?")
@@ -32,15 +31,11 @@ if api_key:
                     img = Image.open(arquivo)
                     conteudo.append(img)
                 
-                # Chamada com a trava de segurança para o Plano Gratuito
-                response = model.generate_content(
-                    conteudo, 
-                    request_options=RequestOptions(api_version='v1')
-                )
+                # Chamada limpa (a biblioteca gerencia a versão automaticamente)
+                response = model.generate_content(conteudo)
                 
                 if response.text:
                     st.success(f"Resposta do Omni: {response.text}")
-                    # Adiciona automaticamente na tabela abaixo
                     nova_linha = pd.DataFrame([{'Hora/Data': 'Confirmar', 'Tarefa/Evento': comando, 'Status': 'Novo'}])
                     st.session_state.agenda = pd.concat([st.session_state.agenda, nova_linha], ignore_index=True)
 
