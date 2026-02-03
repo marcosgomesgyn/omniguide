@@ -17,8 +17,8 @@ if api_key:
     try:
         # Configuração simplificada e direta
         genai.configure(api_key=api_key)
-        model = genai.GenerativeModel('gemini-1.5-flash')
-        
+        model = genai.GenerativeModel('gemini-1.5-pro')
+                
         # --- ÁREA DE COMANDO ---
         st.subheader("🎤 O que o Omni deve fazer?")
         comando = st.text_input("Comando:", value="Agendar live no Instagram quarta às 19h")
