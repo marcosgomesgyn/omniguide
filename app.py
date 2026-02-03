@@ -2,6 +2,7 @@ import streamlit as st
 import google.generativeai as genai
 from PIL import Image
 import pandas as pd
+from google.generativeai.types import RequestOptions
 
 # CONFIGURAÇÃO INICIAL
 st.set_page_config(page_title="Vozia - MiraIA", layout="wide")
@@ -15,14 +16,11 @@ api_key = st.sidebar.text_input("Cole sua API Key aqui:", type="password")
 
 if api_key:
     try:
-
-        # CONFIGURAÇÃO DO MODELO - FORÇANDO VERSÃO ESTÁVEL
-        from google.generativeai.types import RequestOptions
-        
+        # CONFIGURAÇÃO DO MODELO
         genai.configure(api_key=api_key)
         model = genai.GenerativeModel(model_name='gemini-1.5-flash')
         
-        # --- ÁREA DE TESTE ---
+        # --- ÁREA DE COMANDO ---
         st.subheader("🎤 O que o Omni deve fazer?")
         comando = st.text_input("Comando:", value="Agendar live no Instagram quarta às 19h")
         arquivo = st.file_uploader("Suba um Print ou Foto", type=['png', 'jpg', 'jpeg'])
@@ -34,39 +32,23 @@ if api_key:
                     img = Image.open(arquivo)
                     conteudo.append(img)
                 
-                # O PULO DO GATO: Forçando a api_version='v1'
+                # Chamada com a trava de segurança para o Plano Gratuito
                 response = model.generate_content(
                     conteudo, 
                     request_options=RequestOptions(api_version='v1')
                 )
-   
-        # --- ÁREA DE TESTE ---
-        st.subheader("🎤 O que o Omni deve fazer?")
-        comando = st.text_input("Comando:", value="Agendar live no Instagram quarta às 19h")
-        arquivo = st.file_uploader("Suba um Print ou Foto", type=['png', 'jpg', 'jpeg'])
-        
-        if st.button("Executar Comando"):
-            with st.spinner("O Omni está processando..."):
-                # Criando o conteúdo para envio
-                conteudo = [f"Aja como o assistente Vozia. O usuário quer: {comando}"]
-                if arquivo:
-                    img = Image.open(arquivo)
-                    conteudo.append(img)
-                
-                # Chamada da geração
-                response = model.generate_content(conteudo)
                 
                 if response.text:
-                    st.success(f"Resposta: {response.text}")
+                    st.success(f"Resposta do Omni: {response.text}")
+                    # Adiciona automaticamente na tabela abaixo
                     nova_linha = pd.DataFrame([{'Hora/Data': 'Confirmar', 'Tarefa/Evento': comando, 'Status': 'Novo'}])
                     st.session_state.agenda = pd.concat([st.session_state.agenda, nova_linha], ignore_index=True)
 
-        # AGENDA INTERATIVA (Onde você edita e exclui como no Studio)
+        # AGENDA INTERATIVA (Edição e Exclusão)
         st.divider()
         st.subheader("📝 Registros e Agenda")
         st.session_state.agenda = st.data_editor(st.session_state.agenda, num_rows="dynamic", use_container_width=True)
 
     except Exception as e:
-        # Se o erro 404 persistir, vamos capturar o log detalhado aqui
         st.error(f"Erro de conexão: {e}")
         st.info("Dica: Verifique se sua API Key no Google AI Studio tem permissão para o modelo Gemini 1.5 Flash.")
