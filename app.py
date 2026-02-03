@@ -15,12 +15,13 @@ api_key = st.sidebar.text_input("Cole sua API Key aqui:", type="password")
 
 if api_key:
     try:
-        # FORÇANDO A CONFIGURAÇÃO ESTÁVEL
+
+        # Em vez de apenas definir o modelo, vamos forçar a configuração da API
         genai.configure(api_key=api_key)
-        
-        # Tentativa com o nome do modelo sem prefixo v1beta
-        model = genai.GenerativeModel('gemini-1.5-flash') 
-        
+
+        # Tente trocar a linha do modelo por esta:
+        model = genai.GenerativeModel(model_name='gemini-1.5-flash')        
+   
         # --- ÁREA DE TESTE ---
         st.subheader("🎤 O que o Omni deve fazer?")
         comando = st.text_input("Comando:", value="Agendar live no Instagram quarta às 19h")
