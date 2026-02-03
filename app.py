@@ -16,11 +16,29 @@ api_key = st.sidebar.text_input("Cole sua API Key aqui:", type="password")
 if api_key:
     try:
 
-        # Em vez de apenas definir o modelo, vamos forçar a configuração da API
+        # CONFIGURAÇÃO DO MODELO - FORÇANDO VERSÃO ESTÁVEL
+        from google.generativeai.types import RequestOptions
+        
         genai.configure(api_key=api_key)
-
-        # Tente trocar a linha do modelo por esta:
-        model = genai.GenerativeModel(model_name='gemini-1.5-flash')        
+        model = genai.GenerativeModel(model_name='gemini-1.5-flash')
+        
+        # --- ÁREA DE TESTE ---
+        st.subheader("🎤 O que o Omni deve fazer?")
+        comando = st.text_input("Comando:", value="Agendar live no Instagram quarta às 19h")
+        arquivo = st.file_uploader("Suba um Print ou Foto", type=['png', 'jpg', 'jpeg'])
+        
+        if st.button("Executar Comando"):
+            with st.spinner("O Omni está processando..."):
+                conteudo = [f"Aja como o assistente Vozia. O usuário quer: {comando}"]
+                if arquivo:
+                    img = Image.open(arquivo)
+                    conteudo.append(img)
+                
+                # O PULO DO GATO: Forçando a api_version='v1'
+                response = model.generate_content(
+                    conteudo, 
+                    request_options=RequestOptions(api_version='v1')
+                )
    
         # --- ÁREA DE TESTE ---
         st.subheader("🎤 O que o Omni deve fazer?")
